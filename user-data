@@ -55,3 +55,20 @@ coreos:
 
       [Install]
       WantedBy=multi-user.target
+  - name: cattle-agent.service
+    command: start
+    enable: true
+    content: |
+      [Unit]
+      Description=Cattle Agent Container Service
+      Wants=rancher-server.service
+      After=rancher-server.service
+
+      [Service]
+      TimeoutStartSec=0
+      ExecStartPre=-/usr/bin/docker kill rancher/agent:v1.1.0
+      ExecStartPre=-/usr/bin/docker rm rancher/agent:v1.1.0
+      ExecStart=/usr/bin/docker run -e CATTLE_AGENT_IP="172.24.0.101" --privileged --restart=unless-stopped -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/rancher:/var/lib/rancher rancher/agent:v1.1.0 http://172.24.0.101:9000/v2-beta/projects/1a5/scripts/5C8868E7305AE6597A99:1481482800000:pPt4crxtxXztEfSCWu6wbUXTio
+
+      [Install]
+      WantedBy=multi-user.target
