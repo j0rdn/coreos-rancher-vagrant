@@ -48,9 +48,10 @@ coreos:
       After=docker.service
 
       [Service]
-      Restart=always
-      ExecStartPre=-/usr/bin/docker kill rancher/server
-      ExecStart=/usr/bin/docker run -d -p 8080:8080 rancher/server
+      TimeoutStartSec=0
+      ExecStartPre=-/usr/bin/docker kill rancher/server:latest
+      ExecStartPre=-/usr/bin/docker rm rancher/server:latest
+      ExecStart=/usr/bin/docker run -d --restart=unless-stopped -p 9000:8080 --name %n rancher/server:latest
 
       [Install]
       WantedBy=multi-user.target
