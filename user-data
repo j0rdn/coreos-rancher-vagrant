@@ -24,6 +24,20 @@ coreos:
         [Service]
         ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{ "Network": "10.1.0.0/16" }'
     command: start
+  - name: localtime.service
+    command: start
+    enable: true
+    content: |
+      [Unit]
+      Description=Link New York Timezone to /etc/localtime
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/bin/unlink /etc/localtime
+      ExecStart=/usr/bin/ln -s /usr/share/zoneinfo/America/New_York /etc/localtime
+
+      [Install]
+      WantedBy=multi-user.target
   - name: docker-tcp.socket
     command: start
     enable: true
